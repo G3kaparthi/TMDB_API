@@ -5,6 +5,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.gayathri.TMDB.exception.InvalidDataException;
+import com.gayathri.TMDB.exception.NotFoundException;
 import com.gayathri.TMDB.model.Movie;
 import com.gayathri.TMDB.repo.MovieRepository;
 
@@ -21,19 +23,19 @@ public class MovieService {
 	
 	public Movie create(Movie movie) {
 		if(movie==null) {
-			throw new RuntimeException("Invalid movie");
+			throw new InvalidDataException("Invalid movie null");
 		}
 		return movierepository.save(movie);
 	}
 	
 	public Movie read(Long id) {
 		return movierepository.findById(id)
-			.orElseThrow(() -> new RuntimeException("Movie not found"));
+			.orElseThrow(() -> new NotFoundException("Movie not found with id" + id));
 	}
 	
 	public Movie update(Long id, Movie update) {
 		if(update==null || id==null) {
-			throw new RuntimeException("Invalid movie");
+			throw new InvalidDataException("Invalid movie null");
 		}
 		//check if it exists
 		if(movierepository.existsById(id)){
@@ -44,12 +46,12 @@ public class MovieService {
 			movierepository.save(movie);
 			 return movierepository.save(movie);
 		}
-		else throw new RuntimeException("Movie not found");
+		else throw new NotFoundException("Movie not found with id" + id);
 	}
 	
 	public void delete(Long id) {
 		if(movierepository.existsById(id)==false) {
-			throw new RuntimeException("movie not found");
+			throw new NotFoundException("Movie not found with id" + id);
 		}
 		else  movierepository.deleteById(id);
 	}
